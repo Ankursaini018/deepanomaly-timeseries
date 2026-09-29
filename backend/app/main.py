@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import CORS_ORIGINS
+from app.services.model_service import model_service
 
 app = FastAPI(
     title="DeepAnomaly API",
@@ -18,6 +19,11 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+def load_model():
+    model_service.load()
+
+
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "model_loaded": model_service._loaded}
