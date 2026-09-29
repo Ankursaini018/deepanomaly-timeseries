@@ -11,3 +11,5 @@ dist/
 .vscode/
 .env
 !docs/plots/*.png
+backend/artifacts/*.pth
+backend/artifacts/*.npy
