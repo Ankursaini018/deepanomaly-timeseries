@@ -3,12 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import CORS_ORIGINS
 from app.services.model_service import model_service
+from app.api.predict import router as predict_router
+
 
 app = FastAPI(
     title="DeepAnomaly API",
     description="Self-supervised anomaly detection for time series",
     version="1.0.0",
 )
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +22,9 @@ app.add_middleware(
 )
 
 
+app.include_router(predict_router)
+
+
 @app.on_event("startup")
 def load_model():
     model_service.load()
@@ -26,4 +32,7 @@ def load_model():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "model_loaded": model_service._loaded}
+    return {
+        "status": "ok",
+        "model_loaded": model_service.is_loaded(),
+    }
