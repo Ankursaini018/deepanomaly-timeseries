@@ -1,4 +1,4 @@
-export default function ResultsTable({ results }) {
+export default function ResultsTable({ results, onSelectRow, selectedIndex }) {
   return (
     <div className="table-wrapper">
       <table>
@@ -12,7 +12,11 @@ export default function ResultsTable({ results }) {
         </thead>
         <tbody>
           {results.map((r, i) => (
-            <tr key={i} className={r.is_anomaly ? "row-anomaly" : ""}>
+            <tr
+              key={i}
+              className={`${r.is_anomaly ? "row-anomaly" : ""} ${selectedIndex === i ? "row-selected" : ""}`}
+              onClick={() => onSelectRow(i)}
+            >
               <td>{i + 1}</td>
               <td>{r.reconstruction_error.toFixed(6)}</td>
               <td>{r.threshold.toFixed(6)}</td>

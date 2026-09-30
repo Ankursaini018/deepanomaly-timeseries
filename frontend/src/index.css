@@ -161,3 +161,25 @@ tr {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
 }
+
+tbody tr {
+  cursor: pointer;
+}
+
+.row-selected {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.chart-card {
+  background: #161822;
+  border: 1px solid #2a2d3a;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.chart-card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  color: #d1d5db;
+}
