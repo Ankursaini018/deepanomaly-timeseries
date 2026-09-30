@@ -35,6 +35,10 @@ def evaluate():
     val_errors, _ = get_reconstruction_errors(model, val_loader, device)
     threshold = np.percentile(val_errors, THRESHOLD_PERCENTILE)
     print(f"Threshold ({THRESHOLD_PERCENTILE}th percentile of val errors): {threshold:.6f}")
+    np.save(
+    MODEL_DIR.parent.parent / "models" / "saved" / "threshold.npy",
+    np.array([threshold], dtype=np.float32)
+)
 
     # Evaluate on test set
     test_errors, y_true = get_reconstruction_errors(model, test_loader, device)
