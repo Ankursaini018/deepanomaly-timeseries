@@ -1,8 +1,9 @@
+import Header from "./components/Header";
+
 function App() {
   return (
     <div className="app">
-      <h1>DeepAnomaly</h1>
-      <p>Self-Supervised Anomaly Detection in Time Series</p>
+      <Header />
     </div>
   );
 }
