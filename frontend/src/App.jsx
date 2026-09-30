@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import FileUpload from "./components/FileUpload";
+import SummaryCards from "./components/SummaryCards";
+import ResultsTable from "./components/ResultsTable";
 import { predictFromCSV } from "./api/client";
 
 function App() {
@@ -26,7 +28,12 @@ function App() {
       <Header />
       <FileUpload onUpload={handleUpload} loading={loading} />
       {error && <p className="error">{error}</p>}
-      {results && <p>Total: {results.total} | Anomalies: {results.anomalies_found}</p>}
+      {results && (
+        <>
+          <SummaryCards results={results} />
+          <ResultsTable results={results.results} />
+        </>
+      )}
     </div>
   );
 }
