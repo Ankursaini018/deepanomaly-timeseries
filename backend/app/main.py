@@ -30,6 +30,14 @@ def load_model():
     model_service.load()
 
 
+@app.get("/")
+def root():
+    return {
+        "service": "DeepAnomaly API",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
 @app.get("/health")
 def health():
     return {
