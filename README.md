@@ -20,4 +20,6 @@ Both services are deployed as separate Railway services from this monorepo.
 2. Set build argument: `VITE_API_URL=<backend-url>/api`
 3. Deploy
 
-**Live demo:** *(add link once deployed)*
+**Live demo:** https://appealing-success-production-8f9e.up.railway.app
+
+**Backend API:** https://deepanomaly-timeseries-production.up.railway.app/docs
