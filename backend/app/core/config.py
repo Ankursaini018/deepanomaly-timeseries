@@ -13,6 +13,8 @@ INPUT_DIM = 140
 ENCODER_DIMS = [128, 64, 32]
 LATENT_DIM = 16
 
-# Comma-separated list, e.g. "https://myapp.up.railway.app,http://localhost:5173"
-_default_origins = "http://localhost:5173,http://127.0.0.1:5173"
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", _default_origins).split(",")
+# In production this MUST be set via Railway's Variables tab to the
+# deployed frontend URL. Local default only covers dev.
+CORS_ORIGINS = os.getenv(
+    "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+).split(",")
