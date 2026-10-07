@@ -23,3 +23,12 @@ Both services are deployed as separate Railway services from this monorepo.
 **Live demo:** https://appealing-success-production-8f9e.up.railway.app
 
 **Backend API:** https://deepanomaly-timeseries-production.up.railway.app/docs
+
+
+## Try It Now
+
+No setup needed — the app is live:
+
+1. Visit the [live demo](https://appealing-success-production-8f9e.up.railway.app)
+2. Upload `docs/sample_data/demo_sequences.csv` (included in this repo)
+3. View detected anomalies and the reconstruction chart
