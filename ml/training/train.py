@@ -1,24 +1,31 @@
+import argparse
 import torch
 import torch.nn as nn
-import numpy as np
-from pathlib import Path
 
 from ml.data.dataset import get_dataloaders
 from ml.models.autoencoder import Autoencoder
-from ml.utils.config import (
-    MODEL_DIR, EPOCHS, LEARNING_RATE, EARLY_STOP_PATIENCE, RANDOM_SEED
-)
+from ml.models.lstm_autoencoder import LSTMAutoencoder
+from ml.utils.config import MODEL_DIR, EPOCHS, LEARNING_RATE, EARLY_STOP_PATIENCE, RANDOM_SEED
 
 torch.manual_seed(RANDOM_SEED)
 
+MODEL_REGISTRY = {
+    "dense": (Autoencoder, "autoencoder_best.pth"),
+    "lstm": (LSTMAutoencoder, "lstm_autoencoder_best.pth"),
+}
 
-def train():
+
+def train(model_name="dense"):
+    if model_name not in MODEL_REGISTRY:
+        raise ValueError(f"Unknown model '{model_name}'. Choose from {list(MODEL_REGISTRY)}")
+
+    model_cls, filename = MODEL_REGISTRY[model_name]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Device: {device}")
+    print(f"Model: {model_name} | Device: {device}")
 
     train_loader, val_loader, _ = get_dataloaders()
 
-    model = Autoencoder().to(device)
+    model = model_cls().to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -28,6 +35,7 @@ def train():
     best_val_loss = float("inf")
     patience_counter = 0
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    save_path = MODEL_DIR / filename
 
     for epoch in range(1, EPOCHS + 1):
         model.train()
@@ -60,7 +68,7 @@ def train():
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), MODEL_DIR / "autoencoder_best.pth")
+            torch.save(model.state_dict(), save_path)
         else:
             patience_counter += 1
             if patience_counter >= EARLY_STOP_PATIENCE:
@@ -68,8 +76,12 @@ def train():
                 break
 
     print(f"Best val loss: {best_val_loss:.6f}")
-    print(f"Model saved to {MODEL_DIR / 'autoencoder_best.pth'}")
+    print(f"Saved to {save_path}")
+    return best_val_loss
 
 
 if __name__ == "__main__":
-    train()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", choices=list(MODEL_REGISTRY), default="dense")
+    args = parser.parse_args()
+    train(args.model)
