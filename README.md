@@ -5,6 +5,25 @@ B.Tech Final Year Project | 7th Sem AI | Ankur Saini (23EBKAI009)
 Autoencoder trained only on normal data; anomalies detected via
 reconstruction error. Dataset: ECG5000.
 
+
+## Results
+
+Two architectures were trained and compared on the same held-out test set:
+
+| Model | Precision | Recall | F1 | ROC-AUC |
+|---|---|---|---|---|
+| Dense Autoencoder | *(fill)* | *(fill)* | *(fill)* | *(fill)* |
+| LSTM Autoencoder | *(fill)* | *(fill)* | *(fill)* | *(fill)* |
+
+**Why compare these two:** the dense autoencoder treats each timestep as an
+independent input feature, with no explicit notion of sequence order. The
+LSTM autoencoder encodes the sequence through recurrence, which should, in
+principle, capture temporal structure the dense model cannot. The gap (or
+lack of one) between them is itself a useful result — ECG beats are short
+and strongly periodic, which may make the ordering advantage smaller than
+expected.
+
+
 ## Deployment (Railway)
 
 Both services are deployed as separate Railway services from this monorepo.
