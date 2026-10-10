@@ -9,3 +9,4 @@ dist/
 !backend/artifacts/scaler_min.npy
 !backend/artifacts/scaler_scale.npy
 !backend/artifacts/threshold.npy
+!docs/sample_data/*.csv
