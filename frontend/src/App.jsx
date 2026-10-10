@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import FileUpload from "./components/FileUpload";
 import ModelSelector from "./components/ModelSelector";
+import ComparisonPanel from "./components/ComparisonPanel";
 import SummaryCards from "./components/SummaryCards";
 import ResultsTable from "./components/ResultsTable";
 import ReconstructionChart from "./components/ReconstructionChart";
 import ErrorBanner from "./components/ErrorBanner";
 import { fetchModels, predictFromCSV } from "./api/client";
+
 
 function parseCSVText(text) {
   return text.trim().split("\n").map((row) => row.split(",").map(Number));
@@ -101,6 +103,13 @@ function App() {
             selectedIndex={selectedIndex}
           />
         </>
+      )}
+      {ready && mode === "compare" && (
+        <ComparisonPanel
+          resultsByModel={resultsByModel}
+          selectedIndex={selectedIndex}
+          onSelectRow={setSelectedIndex}
+        />
       )}
 
       {ready && (

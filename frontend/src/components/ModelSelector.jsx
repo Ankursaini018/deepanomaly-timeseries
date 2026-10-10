@@ -10,6 +10,12 @@ export default function ModelSelector({
     id: m,
     label: MODEL_LABELS[m] ?? m,
   }));
+  if (available.length > 1) {
+  options.push({
+    id: "compare",
+    label: "Compare both",
+  });
+}
 
   return (
     <div className="model-selector">
@@ -26,3 +32,4 @@ export default function ModelSelector({
     </div>
   );
 }
+
