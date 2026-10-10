@@ -23,6 +23,18 @@ lack of one) between them is itself a useful result — ECG beats are short
 and strongly periodic, which may make the ordering advantage smaller than
 expected.
 
+## Using the Dashboard
+
+- **Model selector:** run inference with the dense or LSTM autoencoder.
+- **Compare both:** run both models on the same file and see how many
+  sequences each flags and how often they agree.
+- **Chart:** click any row to plot the original sequence against each
+  model's reconstruction. Large gaps mark the regions the model could not
+  explain, which is where the anomaly is.
+
+Sample data with a known mix of normal and anomalous beats:
+`docs/sample_data/demo_sequences.csv` (ground truth in `demo_labels.csv`).
+
 
 ## Deployment (Railway)
 
