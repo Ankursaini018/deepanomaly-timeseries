@@ -183,3 +183,37 @@ tbody tr {
   margin-bottom: 1rem;
   color: #d1d5db;
 }
+
+.model-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.model-btn {
+  background: #161822;
+  border: 1px solid #2a2d3a;
+  color: #9ca3af;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.model-btn:hover:not(:disabled) {
+  border-color: #6366f1;
+  color: #e4e6eb;
+}
+
+.model-btn.active {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: #6366f1;
+  color: #e4e6eb;
+}
+
+.model-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

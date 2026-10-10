@@ -12,10 +12,16 @@ export async function predictSequence(sequence) {
   return data;
 }
 
-export async function predictFromCSV(file) {
+export async function fetchModels() {
+  const { data } = await apiClient.get("/models");
+  return data.models;
+}
+
+export async function predictFromCSV(file, model = "dense") {
   const formData = new FormData();
   formData.append("file", file);
   const { data } = await apiClient.post("/predict/upload", formData, {
+    params: { model },
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;
