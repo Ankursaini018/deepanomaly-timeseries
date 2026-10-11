@@ -5,6 +5,7 @@ from app.core.config import INPUT_DIM
 
 class SequenceInput(BaseModel):
     sequence: list[float] = Field(..., description=f"Time series of length {INPUT_DIM}")
+    model: str = Field(default="dense", description="'dense' or 'lstm'")
 
     @field_validator("sequence")
     @classmethod
@@ -15,6 +16,7 @@ class SequenceInput(BaseModel):
 
 
 class PredictionOutput(BaseModel):
+    model: str
     reconstruction_error: float
     is_anomaly: bool
     threshold: float

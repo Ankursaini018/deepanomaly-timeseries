@@ -8,6 +8,8 @@ MODEL_PATH = ARTIFACTS_DIR / "autoencoder_best.pth"
 SCALER_MIN_PATH = ARTIFACTS_DIR / "scaler_min.npy"
 SCALER_SCALE_PATH = ARTIFACTS_DIR / "scaler_scale.npy"
 THRESHOLD_PATH = ARTIFACTS_DIR / "threshold.npy"
+LSTM_MODEL_PATH = ARTIFACTS_DIR / "lstm_autoencoder_best.pth"
+LSTM_THRESHOLD_PATH = ARTIFACTS_DIR / "lstm_threshold.npy"
 
 INPUT_DIM = 140
 ENCODER_DIMS = [128, 64, 32]
