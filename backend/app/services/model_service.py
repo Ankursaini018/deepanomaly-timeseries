@@ -10,6 +10,11 @@ from app.core.model import Autoencoder, LSTMAutoencoder
 
 class ModelService:
     def __init__(self):
+        # Railway uses a constrained CPU container.
+        # Limit PyTorch threading to prevent LSTM inference stalls.
+        torch.set_num_threads(1)
+        torch.set_num_interop_threads(1)
+
         self.device = torch.device("cpu")
         self.models = {}
         self.thresholds = {}
@@ -48,22 +53,28 @@ class ModelService:
 
     def predict(self, sequence: np.ndarray, model_name: str = "dense") -> dict:
         if model_name not in self.models:
-            raise ValueError(f"Model '{model_name}' not available. Choose from {list(self.models)}")
+            raise ValueError(
+                f"Model '{model_name}' not available. "
+                f"Choose from {list(self.models)}"
+            )
 
         model = self.models[model_name]
         threshold = self.thresholds[model_name]
 
         scaled = self.scale(sequence).astype(np.float32)
-        x = torch.tensor(scaled).unsqueeze(0).to(self.device)
 
-        with torch.no_grad():
+        x = torch.from_numpy(scaled).unsqueeze(0).to(self.device)
+
+        with torch.inference_mode():
             reconstructed = model(x)
-            # Error is computed in scaled space, the same space the threshold was fit in
+
+            # Error is computed in scaled space, the same space
+            # the threshold was fit in.
             error = torch.mean((reconstructed - x) ** 2).item()
 
-        # Invert the MinMax transform so the reconstruction is in the same
-        # units as the uploaded data and can be plotted against it directly.
-        recon_scaled = reconstructed.squeeze(0).numpy()
+        # Invert the MinMax transform so the reconstruction is in
+        # the same units as the uploaded data.
+        recon_scaled = reconstructed.squeeze(0).cpu().numpy()
         recon_raw = recon_scaled / self.scaler_scale + self.scaler_min
 
         return {
