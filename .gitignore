@@ -12,3 +12,17 @@ dist/
 !docs/sample_data/*.csv
 !backend/artifacts/*.pth
 !backend/artifacts/*.npy
+
+# Python generated files
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated ML data and model outputs
+ml/data/raw/
+ml/data/processed/
+ml/models/saved/
+
+# Local test data
+backend/test_sample.csv
