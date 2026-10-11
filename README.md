@@ -1,65 +1,79 @@
-# DeepAnomaly — Self-Supervised Anomaly Detection in Time Series
+# DeepAnomaly
 
-B.Tech Final Year Project | 7th Sem AI | Ankur Saini (23EBKAI009)
+**Self-supervised anomaly detection for time series: PyTorch autoencoders, FastAPI inference service, React dashboard.**
 
-Autoencoder trained only on normal data; anomalies detected via
-reconstruction error. Dataset: ECG5000.
+[Live demo](https://appealing-success-production-8f9e.up.railway.app) · [API docs](https://deepanomaly-timeseries-production.up.railway.app)
 
+
+## Problem
+
+Anomalies in sensor and biomedical signals (equipment faults, arrhythmias) are rare, diverse, and expensive to label. Supervised detectors need labelled anomalies that usually do not exist.
+
+## Approach
+
+Autoencoders are trained **only on normal sequences**. They learn to reconstruct normal patterns with low error; anomalous input falls outside what they learned, so reconstruction error rises. That error is the detection score, and the threshold is set at the 95th percentile of error on a held-out **normal-only validation set**, so no anomaly labels or test data are used to fit it.
+
+Two architectures are compared:
+- **Dense autoencoder:** treats the 140 timesteps as a flat feature vector.
+- **LSTM autoencoder:** encodes the sequence through recurrence.
 
 ## Results
 
-Two architectures were trained and compared on the same held-out test set:
+Held-out test set (ECG5000; the test set contains every anomaly plus unseen normal beats):
 
-| Model | Precision | Recall | F1 | ROC-AUC |
-|---|---|---|---|---|
-| Dense Autoencoder | *(fill)* | *(fill)* | *(fill)* | *(fill)* |
-| LSTM Autoencoder | *(fill)* | *(fill)* | *(fill)* | *(fill)* |
+[PASTE TABLE FROM docs/results/results.md]
 
-**Why compare these two:** the dense autoencoder treats each timestep as an
-independent input feature, with no explicit notion of sequence order. The
-LSTM autoencoder encodes the sequence through recurrence, which should, in
-principle, capture temporal structure the dense model cannot. The gap (or
-lack of one) between them is itself a useful result — ECG beats are short
-and strongly periodic, which may make the ordering advantage smaller than
-expected.
+![Error distributions](docs/plots/error_distribution.png)
+![ROC curves](docs/plots/roc_curves.png)
 
-## Using the Dashboard
+Accuracy is deliberately not reported: the test set is ~78% anomalous, so a trivial "everything is an anomaly" classifier would score ~78%. Precision, recall, F1, ROC-AUC and PR-AUC are reported instead.
 
-- **Model selector:** run inference with the dense or LSTM autoencoder.
-- **Compare both:** run both models on the same file and see how many
-  sequences each flags and how often they agree.
-- **Chart:** click any row to plot the original sequence against each
-  model's reconstruction. Large gaps mark the regions the model could not
-  explain, which is where the anomaly is.
+## Engineering notes
 
-Sample data with a known mix of normal and anomalous beats:
-`docs/sample_data/demo_sequences.csv` (ground truth in `demo_labels.csv`).
+- **No leakage:** train/val contain normal samples only; the scaler is fit on train only; the threshold comes from validation errors.
+- **Out-of-range test values are preserved:** test data is not clipped to [0, 1], since excursions beyond the training range are part of the anomaly signal.
+- **Train/serve separation:** `ml/` (offline training) and `backend/` (lean inference image, CPU-only torch).
+- **Validated input:** Pydantic enforces sequence length; CSV uploads are checked for shape.
+- **Tested:** pytest suite for the API contract and preprocessing invariants.
+- **Deployed:** containerised services on Railway.
 
+## Architecture
 
-## Deployment (Railway)
+    ECG5000 -> preprocess -> train (dense / LSTM) -> artifacts
+                                                        |
+    React dashboard  <--HTTP-->  FastAPI  <-- loads --  artifacts
 
-Both services are deployed as separate Railway services from this monorepo.
+## Run locally
 
-**Backend**
-1. New Railway service → connect this repo → set Root Directory to `backend`
-2. Railway auto-detects the Dockerfile
-3. Set environment variable: `CORS_ORIGINS=<frontend-railway-url>`
-4. Deploy — note the generated public URL (e.g. `https://deepanomaly-backend.up.railway.app`)
+    # ML pipeline
+    python -m venv venv && venv\Scripts\activate
+    pip install -r requirements.txt
+    python -m ml.data.download_data
+    python -m ml.data.preprocess
+    python -m ml.training.train --model dense
+    python -m ml.training.train --model lstm
+    python -m ml.evaluation.report
 
-**Frontend**
-1. New Railway service → same repo → set Root Directory to `frontend`
-2. Set build argument: `VITE_API_URL=<backend-url>/api`
-3. Deploy
+    # Backend (copy trained artifacts into backend/artifacts first)
+    cd backend && pip install -r requirements.txt
+    uvicorn app.main:app --reload --port 8000
 
-**Live demo:** https://appealing-success-production-8f9e.up.railway.app
+    # Frontend
+    cd frontend && npm install && npm run dev
 
-**Backend API:** https://deepanomaly-timeseries-production.up.railway.app/docs
+Try it with `docs/sample_data/demo_sequences.csv` (ground truth in `demo_labels.csv`).
 
+## Limitations
 
-## Try It Now
+- Evaluated on a single dataset (ECG5000), which is relatively easy; results may not transfer to noisier industrial sensors.
+- The 95th-percentile threshold fixes the false-positive rate on normal data at about 5% by design. Real deployments should tune it to the cost of a false alarm.
+- Detects *that* a sequence is abnormal, not *which type* of abnormality.
+- Univariate input; the multivariate extension (e.g. NASA Turbofan) is future work.
 
-No setup needed — the app is live:
+## Dataset and references
 
-1. Visit the [live demo](https://appealing-success-production-8f9e.up.railway.app)
-2. Upload `docs/sample_data/demo_sequences.csv` (included in this repo)
-3. View detected anomalies and the reconstruction chart
+- [ECG5000](https://www.timeseriesclassification.com/description.php?Dataset=ECG5000), UCR Time Series Archive
+- [A Review on Self-Supervised Learning for Time Series Anomaly Detection](https://arxiv.org/abs/2501.15196)
+- [Self-Supervised Learning for Time-Series Anomaly Detection in Industrial IoT](https://www.mdpi.com/2079-9292/11/14/2146)
+
+**Author:** Ankur Saini (23EBKAI009), B.Tech AI, 7th semester
