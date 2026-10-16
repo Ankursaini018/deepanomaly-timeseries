@@ -43,6 +43,11 @@ Accuracy is deliberately not reported: the test set is ~78% anomalous, so a triv
                                                         |
     React dashboard  <--HTTP-->  FastAPI  <-- loads --  artifacts
 
+## Pages
+
+- **Home:** project overview, how it works, and the live detector (upload, model selector, compare mode, reconstruction chart).
+- **About:** the problem, approach, pipeline, model details, measured results, tech stack, and limitations.
+
 ## Run locally
 
     # ML pipeline

@@ -388,3 +388,23 @@ main { flex: 1; }
 .about-author .btn {
   margin-top: 0.5rem;
 }
+
+@media (max-width: 800px) {
+  .page { padding: 1.25rem; }
+  .navbar-inner { padding: 0.75rem 1.25rem; }
+  .hero { padding: 3rem 1.25rem 2.5rem; }
+  .hero h1 { font-size: 1.9rem; }
+
+  .stats-strip,
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .steps-grid,
+  .compare-grid,
+  .model-grid,
+  .tech-grid { grid-template-columns: 1fr; }
+
+  .table-wrapper { overflow-x: auto; }
+  .pipeline-item { width: 100%; }
+  .pipe-box { flex: 1; }
+  .pipe-arrow { transform: rotate(90deg); }
+}
