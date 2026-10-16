@@ -26,3 +26,5 @@ ml/models/saved/
 
 # Local test data
 backend/test_sample.csv
+
+!frontend/public/demo_sequences.csv
