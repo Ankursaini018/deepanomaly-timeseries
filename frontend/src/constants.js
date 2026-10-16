@@ -9,3 +9,4 @@ export const MODEL_COLORS = {
 };
 
 export const MODEL_ORDER = ["dense", "lstm"];
+export const REPO_URL = "https://github.com/Ankursaini018/deepanomaly-timeseries";
